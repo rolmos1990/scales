@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scale Quest</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero">
+      <div>
+        <span class="eyebrow">ENTRENAMIENTO MUSICAL</span>
+        <h1>Scale Quest</h1>
+        <p>Memoriza escalas mayores y domina sus grados jugando.</p>
+      </div>
+      <button id="restartBtn" class="ghost-btn">Nueva partida</button>
+    </section>
+
+    <section class="stats-grid">
+      <article class="stat-card">
+        <span>Puntos</span>
+        <strong id="score">0</strong>
+      </article>
+      <article class="stat-card">
+        <span>Racha</span>
+        <strong id="streak">0</strong>
+      </article>
+      <article class="stat-card">
+        <span>Pregunta</span>
+        <strong><span id="currentQuestion">1</span>/<span id="totalQuestions">15</span></strong>
+      </article>
+      <article class="stat-card">
+        <span>Tiempo</span>
+        <strong id="timer">20</strong>
+      </article>
+    </section>
+
+    <section class="game-card">
+      <div id="progressBar" class="progress-bar"><div></div></div>
+
+      <div id="questionArea">
+        <span id="scaleBadge" class="scale-badge">D mayor</span>
+        <h2 id="questionText">¿Cuál es la tercera nota de D mayor?</h2>
+        <p class="helper">Puedes responder con sostenidos (#) o bemoles (b).</p>
+
+        <form id="answerForm">
+          <input
+            id="answerInput"
+            type="text"
+            autocomplete="off"
+            maxlength="4"
+            placeholder="Ejemplo: F#"
+            aria-label="Respuesta"
+          />
+          <button type="submit" class="primary-btn">Comprobar</button>
+        </form>
+
+        <div id="feedback" class="feedback hidden"></div>
+        <button id="nextBtn" class="next-btn hidden">Siguiente pregunta</button>
+      </div>
+
+      <div id="resultArea" class="result-area hidden">
+        <div class="trophy">🏆</div>
+        <h2>¡Ronda completada!</h2>
+        <p id="finalMessage"></p>
+        <div class="final-score">
+          <span>Puntaje final</span>
+          <strong id="finalScore">0</strong>
+        </div>
+        <button id="playAgainBtn" class="primary-btn">Jugar otra vez</button>
+      </div>
+    </section>
+
+    <section class="scale-preview">
+      <div>
+        <span class="eyebrow">ESCALAS ACTIVAS</span>
+        <h3 id="activeScalesText">C · D · E · F · G · A · B</h3>
+      </div>
+      <p>Edita <code>config/game-config.json</code> para elegir las escalas y grados.</p>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

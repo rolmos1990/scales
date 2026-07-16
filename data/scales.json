@@ -1,0 +1,236 @@
+{
+  "C": {
+    "name": "C mayor",
+    "tonic": "C",
+    "notes": [
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "A",
+      "B"
+    ]
+  },
+  "C#": {
+    "name": "C# mayor",
+    "tonic": "C#",
+    "notes": [
+      "C#",
+      "D#",
+      "E#",
+      "F#",
+      "G#",
+      "A#",
+      "B#"
+    ]
+  },
+  "Db": {
+    "name": "Db mayor",
+    "tonic": "Db",
+    "notes": [
+      "Db",
+      "Eb",
+      "F",
+      "Gb",
+      "Ab",
+      "Bb",
+      "C"
+    ]
+  },
+  "D": {
+    "name": "D mayor",
+    "tonic": "D",
+    "notes": [
+      "D",
+      "E",
+      "F#",
+      "G",
+      "A",
+      "B",
+      "C#"
+    ]
+  },
+  "D#": {
+    "name": "D# mayor",
+    "tonic": "D#",
+    "notes": [
+      "D#",
+      "E#",
+      "F##",
+      "G#",
+      "A#",
+      "B#",
+      "C##"
+    ]
+  },
+  "Eb": {
+    "name": "Eb mayor",
+    "tonic": "Eb",
+    "notes": [
+      "Eb",
+      "F",
+      "G",
+      "Ab",
+      "Bb",
+      "C",
+      "D"
+    ]
+  },
+  "E": {
+    "name": "E mayor",
+    "tonic": "E",
+    "notes": [
+      "E",
+      "F#",
+      "G#",
+      "A",
+      "B",
+      "C#",
+      "D#"
+    ]
+  },
+  "F": {
+    "name": "F mayor",
+    "tonic": "F",
+    "notes": [
+      "F",
+      "G",
+      "A",
+      "Bb",
+      "C",
+      "D",
+      "E"
+    ]
+  },
+  "F#": {
+    "name": "F# mayor",
+    "tonic": "F#",
+    "notes": [
+      "F#",
+      "G#",
+      "A#",
+      "B",
+      "C#",
+      "D#",
+      "E#"
+    ]
+  },
+  "Gb": {
+    "name": "Gb mayor",
+    "tonic": "Gb",
+    "notes": [
+      "Gb",
+      "Ab",
+      "Bb",
+      "Cb",
+      "Db",
+      "Eb",
+      "F"
+    ]
+  },
+  "G": {
+    "name": "G mayor",
+    "tonic": "G",
+    "notes": [
+      "G",
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F#"
+    ]
+  },
+  "G#": {
+    "name": "G# mayor",
+    "tonic": "G#",
+    "notes": [
+      "G#",
+      "A#",
+      "B#",
+      "C#",
+      "D#",
+      "E#",
+      "F##"
+    ]
+  },
+  "Ab": {
+    "name": "Ab mayor",
+    "tonic": "Ab",
+    "notes": [
+      "Ab",
+      "Bb",
+      "C",
+      "Db",
+      "Eb",
+      "F",
+      "G"
+    ]
+  },
+  "A": {
+    "name": "A mayor",
+    "tonic": "A",
+    "notes": [
+      "A",
+      "B",
+      "C#",
+      "D",
+      "E",
+      "F#",
+      "G#"
+    ]
+  },
+  "A#": {
+    "name": "A# mayor",
+    "tonic": "A#",
+    "notes": [
+      "A#",
+      "B#",
+      "C##",
+      "D#",
+      "E#",
+      "F##",
+      "G##"
+    ]
+  },
+  "Bb": {
+    "name": "Bb mayor",
+    "tonic": "Bb",
+    "notes": [
+      "Bb",
+      "C",
+      "D",
+      "Eb",
+      "F",
+      "G",
+      "A"
+    ]
+  },
+  "B": {
+    "name": "B mayor",
+    "tonic": "B",
+    "notes": [
+      "B",
+      "C#",
+      "D#",
+      "E",
+      "F#",
+      "G#",
+      "A#"
+    ]
+  },
+  "Cb": {
+    "name": "Cb mayor",
+    "tonic": "Cb",
+    "notes": [
+      "Cb",
+      "Db",
+      "Eb",
+      "Fb",
+      "Gb",
+      "Ab",
+      "Bb"
+    ]
+  }
+}
