@@ -6,9 +6,15 @@ const state = {
   streak: 0,
   answered: false,
   timerId: null,
+  autoNextTimerId: null,
+  totalTimerId: null,
   secondsLeft: 0,
-  currentQuestion: null
+  currentQuestion: null,
+  startTime: null
 };
+
+const AUTO_NEXT_DELAY_CORRECT_MS = 2000;
+const AUTO_NEXT_DELAY_INCORRECT_MS = 3000;
 
 const els = {
   score: document.querySelector("#score"),
@@ -25,7 +31,10 @@ const els = {
   nextBtn: document.querySelector("#nextBtn"),
   questionArea: document.querySelector("#questionArea"),
   resultArea: document.querySelector("#resultArea"),
+  totalTime: document.querySelector("#totalTime"),
   finalScore: document.querySelector("#finalScore"),
+  finalTime: document.querySelector("#finalTime"),
+  avgTime: document.querySelector("#avgTime"),
   finalMessage: document.querySelector("#finalMessage"),
   activeScalesText: document.querySelector("#activeScalesText"),
   restartBtn: document.querySelector("#restartBtn"),
@@ -184,6 +193,12 @@ function evaluateAnswer(rawAnswer, timedOut = false) {
   els.streak.textContent = state.streak;
   els.nextBtn.classList.remove("hidden");
   els.nextBtn.focus();
+
+  clearTimeout(state.autoNextTimerId);
+  state.autoNextTimerId = setTimeout(
+    nextQuestion,
+    correct ? AUTO_NEXT_DELAY_CORRECT_MS : AUTO_NEXT_DELAY_INCORRECT_MS
+  );
 }
 
 function buildScaleExplanation() {
@@ -193,6 +208,7 @@ function buildScaleExplanation() {
 }
 
 function nextQuestion() {
+  clearTimeout(state.autoNextTimerId);
   if (state.questionNumber >= state.config.questionsPerRound) {
     finishRound();
     return;
@@ -200,12 +216,28 @@ function nextQuestion() {
   renderQuestion();
 }
 
+function formatDuration(totalMs) {
+  const totalSeconds = Math.round(totalMs / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
+}
+
+function updateTotalTime() {
+  els.totalTime.textContent = formatDuration(Date.now() - state.startTime);
+}
+
 function finishRound() {
   clearInterval(state.timerId);
+  clearTimeout(state.autoNextTimerId);
+  clearInterval(state.totalTimerId);
   els.progress.style.width = "100%";
   els.questionArea.classList.add("hidden");
   els.resultArea.classList.remove("hidden");
+  const elapsedMs = Date.now() - state.startTime;
   els.finalScore.textContent = state.score;
+  els.finalTime.textContent = formatDuration(elapsedMs);
+  els.avgTime.textContent = formatDuration(elapsedMs / state.questionNumber);
 
   const maxRoughScore = state.config.questionsPerRound * 45;
   const ratio = state.score / maxRoughScore;
@@ -220,13 +252,18 @@ function finishRound() {
 
 function resetGame() {
   clearInterval(state.timerId);
+  clearTimeout(state.autoNextTimerId);
+  clearInterval(state.totalTimerId);
   state.questionNumber = 0;
   state.score = 0;
   state.streak = 0;
   state.answered = false;
+  state.startTime = Date.now();
 
   els.score.textContent = "0";
   els.streak.textContent = "0";
+  updateTotalTime();
+  state.totalTimerId = setInterval(updateTotalTime, 1000);
   els.questionArea.classList.remove("hidden");
   els.resultArea.classList.add("hidden");
   renderQuestion();
