@@ -254,10 +254,236 @@ code {
 
 .hidden { display: none !important; }
 
+.hero-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* Menú principal */
+.menu-shell {
+  width: min(980px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 64px 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.menu-intro {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.menu-intro p {
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+
+.mode-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+.mode-card {
+  border: 1px solid var(--border);
+  background: rgba(22,29,47,.88);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 20px 60px rgba(0,0,0,.24);
+  border-radius: 28px;
+  padding: 42px 32px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  transition: transform .2s ease, border-color .2s ease;
+}
+
+.mode-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(142,227,178,.4);
+}
+
+.mode-icon {
+  font-size: 3rem;
+  margin-bottom: 6px;
+}
+
+.mode-card h2 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.mode-card p {
+  color: var(--muted);
+  margin: 0 0 14px;
+}
+
+.mode-card .primary-btn {
+  width: 100%;
+  max-width: 220px;
+}
+
+/* Modo Transporte */
+.difficulty-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.difficulty-label {
+  color: var(--muted);
+  font-size: .9rem;
+}
+
+.difficulty-btn {
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,.06);
+  color: var(--text);
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: .85rem;
+  transition: all .15s ease;
+}
+
+.difficulty-btn.active {
+  background: var(--accent);
+  color: #102016;
+  border-color: transparent;
+}
+
+.transport-keys {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.key-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.key-badge span {
+  color: var(--muted);
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+}
+
+.key-badge strong {
+  font-size: 2.4rem;
+}
+
+.key-badge.accent strong {
+  color: var(--accent);
+}
+
+.transport-arrow {
+  font-size: 1.8rem;
+  color: var(--muted);
+}
+
+.origin-progression {
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 28px;
+}
+
+.chord-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 520px;
+  margin: 0 auto 24px;
+}
+
+.chord-row {
+  display: grid;
+  grid-template-columns: 70px 24px 1fr;
+  align-items: center;
+  gap: 10px;
+}
+
+.chord-origin {
+  font-weight: 800;
+  font-size: 1.1rem;
+  text-align: right;
+}
+
+.chord-row-arrow {
+  color: var(--muted);
+  text-align: center;
+}
+
+.chord-input {
+  width: 100%;
+}
+
+.chord-input.input-correct {
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 3px rgba(84,199,136,.15);
+}
+
+.chord-input.input-incorrect {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px rgba(255,141,141,.15);
+}
+
+.chord-row .chord-result {
+  grid-column: 1 / -1;
+  font-weight: 700;
+  font-size: .9rem;
+}
+
+.chord-result.correct { color: var(--accent); }
+.chord-result.incorrect { color: var(--danger); }
+
+.chord-roman {
+  margin-left: 6px;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+#transportForm .primary-btn {
+  display: block;
+  margin: 0 auto;
+}
+
+.transport-result {
+  text-align: center;
+  margin-top: 24px;
+}
+
+.result-summary {
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+.result-roman {
+  color: var(--muted);
+  margin-bottom: 18px;
+}
+
 @media (max-width: 720px) {
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
   .hero, .scale-preview { align-items: flex-start; flex-direction: column; }
   .game-card { padding: 30px 20px; }
   #answerForm { flex-direction: column; }
   .primary-btn { width: 100%; }
+  .mode-grid { grid-template-columns: 1fr; }
+  .chord-row { grid-template-columns: 56px 20px 1fr; }
+  .transport-keys { gap: 14px; }
+  .key-badge strong { font-size: 1.8rem; }
 }

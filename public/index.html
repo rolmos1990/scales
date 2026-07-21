@@ -7,14 +7,41 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <main class="app-shell">
+  <section id="mainMenu" class="menu-shell">
+    <div class="menu-intro">
+      <span class="eyebrow">ENTRENAMIENTO MUSICAL</span>
+      <h1>Scale Quest</h1>
+      <p>Elige un modo de juego para empezar a practicar.</p>
+    </div>
+
+    <div class="mode-grid">
+      <article class="mode-card">
+        <div class="mode-icon">🎵</div>
+        <h2>Escalas</h2>
+        <p>Practica escalas, notas y grados</p>
+        <button id="playScalesBtn" class="primary-btn">Jugar</button>
+      </article>
+
+      <article class="mode-card">
+        <div class="mode-icon">🔄</div>
+        <h2>Transporte</h2>
+        <p>Practica progresiones y transpórtalas entre tonalidades</p>
+        <button id="playTransportBtn" class="primary-btn">Jugar</button>
+      </article>
+    </div>
+  </section>
+
+  <main class="app-shell hidden" id="scalesView">
     <section class="hero">
       <div>
         <span class="eyebrow">ENTRENAMIENTO MUSICAL</span>
         <h1>Scale Quest</h1>
         <p>Memoriza escalas mayores y domina sus grados jugando.</p>
       </div>
-      <button id="restartBtn" class="ghost-btn">Nueva partida</button>
+      <div class="hero-actions">
+        <button id="scalesBackBtn" class="ghost-btn">← Menú</button>
+        <button id="restartBtn" class="ghost-btn">Nueva partida</button>
+      </div>
     </section>
 
     <section class="stats-grid">
@@ -93,6 +120,86 @@
     </section>
   </main>
 
+  <main class="app-shell hidden" id="transportView">
+    <section class="hero">
+      <div>
+        <span class="eyebrow">TRANSPORTE DE TONALIDADES</span>
+        <h1>Transporte</h1>
+        <p>Desarrolla velocidad mental transportando progresiones entre tonalidades.</p>
+      </div>
+      <div class="hero-actions">
+        <button id="transportBackBtn" class="ghost-btn">← Menú</button>
+      </div>
+    </section>
+
+    <section class="difficulty-row" id="difficultyRow">
+      <span class="difficulty-label">Dificultad:</span>
+      <button class="difficulty-btn" data-difficulty="1">Nivel 1 · Básico</button>
+      <button class="difficulty-btn" data-difficulty="2">Nivel 2 · Normal</button>
+      <button class="difficulty-btn" data-difficulty="3">Nivel 3 · Avanzado</button>
+    </section>
+
+    <section class="stats-grid">
+      <article class="stat-card">
+        <span>Ejercicios</span>
+        <strong id="tExercises">0</strong>
+      </article>
+      <article class="stat-card">
+        <span>Precisión</span>
+        <strong id="tAccuracy">0%</strong>
+      </article>
+      <article class="stat-card">
+        <span>Racha actual</span>
+        <strong id="tStreak">0</strong>
+      </article>
+      <article class="stat-card">
+        <span>Mejor racha</span>
+        <strong id="tBestStreak">0</strong>
+      </article>
+    </section>
+
+    <section class="game-card" id="transportGameCard">
+      <div id="transportError" class="feedback incorrect hidden"></div>
+
+      <div id="transportContent">
+        <div class="transport-keys">
+          <div class="key-badge">
+            <span>TONALIDAD ORIGEN</span>
+            <strong id="fromKeyBadge">C</strong>
+          </div>
+          <div class="transport-arrow">→</div>
+          <div class="key-badge accent">
+            <span>TRANSPORTAR A</span>
+            <strong id="toKeyBadge">E</strong>
+          </div>
+        </div>
+
+        <div id="originProgression" class="origin-progression"></div>
+
+        <form id="transportForm">
+          <div id="chordRows" class="chord-rows"></div>
+          <button type="submit" id="transportCheckBtn" class="primary-btn">Comprobar</button>
+        </form>
+
+        <div id="transportResult" class="transport-result hidden">
+          <p id="transportResultSummary" class="result-summary"></p>
+          <p id="transportRoman" class="result-roman"></p>
+          <button id="transportNextBtn" class="next-btn">Siguiente progresión</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="scale-preview" id="transpositionHistory">
+      <div>
+        <span class="eyebrow">PRECISIÓN POR TONALIDAD</span>
+        <h3 id="transpositionHistoryText">Aún no hay datos suficientes.</h3>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/music-theory.js"></script>
   <script src="app.js"></script>
+  <script src="js/transport-mode.js"></script>
+  <script src="js/menu.js"></script>
 </body>
 </html>

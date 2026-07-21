@@ -38,7 +38,8 @@ const els = {
   finalMessage: document.querySelector("#finalMessage"),
   activeScalesText: document.querySelector("#activeScalesText"),
   restartBtn: document.querySelector("#restartBtn"),
-  playAgainBtn: document.querySelector("#playAgainBtn")
+  playAgainBtn: document.querySelector("#playAgainBtn"),
+  backBtn: document.querySelector("#scalesBackBtn")
 };
 
 const degreeNames = {
@@ -51,43 +52,14 @@ const degreeNames = {
   7: "séptima"
 };
 
-const enharmonicMap = {
-  "C#": ["DB"],
-  "DB": ["C#"],
-  "D#": ["EB"],
-  "EB": ["D#"],
-  "F#": ["GB"],
-  "GB": ["F#"],
-  "G#": ["AB"],
-  "AB": ["G#"],
-  "A#": ["BB"],
-  "BB": ["A#"],
-  "B#": ["C"],
-  "CB": ["B"],
-  "E#": ["F"],
-  "FB": ["E"],
-  "F##": ["G"],
-  "C##": ["D"],
-  "G##": ["A"]
-};
-
-function normalizeNote(value) {
-  return value
-    .trim()
-    .toUpperCase()
-    .replaceAll("♯", "#")
-    .replaceAll("♭", "B")
-    .replace(/\s+/g, "");
-}
-
 function isCorrectAnswer(answer, expected) {
-  const normalizedAnswer = normalizeNote(answer);
-  const normalizedExpected = normalizeNote(expected);
+  const normalizedAnswer = MusicTheory.normalizeNoteName(answer);
+  const normalizedExpected = MusicTheory.normalizeNoteName(expected);
 
   if (normalizedAnswer === normalizedExpected) return true;
   if (!state.config.allowEnharmonicAnswers) return false;
 
-  return (enharmonicMap[normalizedExpected] || []).includes(normalizedAnswer);
+  return MusicTheory.isEnharmonicMatch(normalizedAnswer, normalizedExpected);
 }
 
 function randomItem(items) {
@@ -269,6 +241,12 @@ function resetGame() {
   renderQuestion();
 }
 
+function teardownScalesMode() {
+  clearInterval(state.timerId);
+  clearTimeout(state.autoNextTimerId);
+  clearInterval(state.totalTimerId);
+}
+
 async function loadGame() {
   const response = await fetch("/api/game-data");
   if (!response.ok) {
@@ -299,10 +277,19 @@ els.answerForm.addEventListener("submit", (event) => {
 els.nextBtn.addEventListener("click", nextQuestion);
 els.restartBtn.addEventListener("click", resetGame);
 els.playAgainBtn.addEventListener("click", resetGame);
-
-loadGame().catch((error) => {
-  console.error(error);
-  els.questionText.textContent = "No se pudo iniciar el juego.";
-  els.feedback.className = "feedback incorrect";
-  els.feedback.textContent = error.message;
+els.backBtn.addEventListener("click", () => {
+  teardownScalesMode();
+  document.dispatchEvent(new CustomEvent("app:back-to-menu"));
 });
+
+window.ScalesMode = {
+  start() {
+    loadGame().catch((error) => {
+      console.error(error);
+      els.questionText.textContent = "No se pudo iniciar el juego.";
+      els.feedback.className = "feedback incorrect";
+      els.feedback.textContent = error.message;
+    });
+  },
+  teardown: teardownScalesMode
+};
