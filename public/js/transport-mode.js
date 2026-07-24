@@ -163,7 +163,7 @@ const TransportMode = (function () {
       input.className = "chord-input";
       input.dataset.index = String(index);
       input.autocomplete = "off";
-      input.placeholder = `Ej: ${chord.target.symbol}`;
+      input.placeholder = "Acorde transportado";
       input.setAttribute("aria-label", `Transporte de ${chord.original}`);
 
       input.addEventListener("keydown", (event) => {
