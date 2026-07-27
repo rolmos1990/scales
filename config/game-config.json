@@ -2,21 +2,19 @@
   "enabledScales": [
     "C",
     "D",
-    "E",
-    "F",
-    "G"
+    "E"
   ],
   "questionTypes": [
     "degreeToNote",
     "noteToDegree"
   ],
   "enabledDegrees": [
-    
-    
+    1,
+    2,
     3,
-    
+    4,
     5,
-    
+    6,
     7
   ],
   "questionsPerRound": 15,

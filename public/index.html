@@ -156,12 +156,22 @@
         <span>Mejor racha</span>
         <strong id="tBestStreak">0</strong>
       </article>
+      <article class="stat-card">
+        <span>Tiempo promedio</span>
+        <strong id="tAvgTime">0.0s</strong>
+      </article>
+      <article class="stat-card">
+        <span>Tiempo total</span>
+        <strong id="tTotalTime">0:00</strong>
+      </article>
     </section>
 
     <section class="game-card" id="transportGameCard">
       <div id="transportError" class="feedback incorrect hidden"></div>
 
       <div id="transportContent">
+        <div class="transport-timer">⏱ <span id="transportTimer">0.0s</span></div>
+
         <div class="transport-keys">
           <div class="key-badge">
             <span>TONALIDAD ORIGEN</span>
@@ -183,6 +193,7 @@
 
         <div id="transportResult" class="transport-result hidden">
           <p id="transportResultSummary" class="result-summary"></p>
+          <p id="transportElapsedTime" class="result-time"></p>
           <p id="transportRoman" class="result-roman"></p>
           <button id="transportNextBtn" class="next-btn">Siguiente progresión</button>
         </div>

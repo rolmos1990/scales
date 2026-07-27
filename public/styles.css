@@ -401,6 +401,15 @@ code {
   margin-bottom: 28px;
 }
 
+.transport-timer {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
 .chord-rows {
   display: flex;
   flex-direction: column;
@@ -469,6 +478,12 @@ code {
 .result-summary {
   font-size: 1.4rem;
   font-weight: 800;
+}
+
+.result-time {
+  color: var(--accent);
+  font-weight: 700;
+  margin-top: 4px;
 }
 
 .result-roman {

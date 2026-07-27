@@ -13,11 +13,15 @@ const TransportMode = (function () {
     fromKeyBadge: document.querySelector("#fromKeyBadge"),
     toKeyBadge: document.querySelector("#toKeyBadge"),
     originProgression: document.querySelector("#originProgression"),
+    timer: document.querySelector("#transportTimer"),
+    avgTime: document.querySelector("#tAvgTime"),
+    totalTime: document.querySelector("#tTotalTime"),
     form: document.querySelector("#transportForm"),
     chordRows: document.querySelector("#chordRows"),
     checkBtn: document.querySelector("#transportCheckBtn"),
     result: document.querySelector("#transportResult"),
     resultSummary: document.querySelector("#transportResultSummary"),
+    elapsedTime: document.querySelector("#transportElapsedTime"),
     resultRoman: document.querySelector("#transportRoman"),
     nextBtn: document.querySelector("#transportNextBtn"),
     backBtn: document.querySelector("#transportBackBtn"),
@@ -30,25 +34,56 @@ const TransportMode = (function () {
     difficulty: 2,
     current: null,
     answered: false,
+    timerStart: null,
+    timerInterval: null,
     stats: loadStats()
   };
 
   function loadStats() {
-    try {
-      const raw = localStorage.getItem(STORAGE_STATS_KEY);
-      if (raw) return JSON.parse(raw);
-    } catch (error) {
-      console.warn("No se pudieron leer las estadísticas de transporte.", error);
-    }
-    return {
+    const defaults = {
       exercises: 0,
       chordsAnswered: 0,
       correct: 0,
       incorrect: 0,
       currentStreak: 0,
       bestStreak: 0,
+      totalTimeMs: 0,
       byTransposition: {}
     };
+    try {
+      const raw = localStorage.getItem(STORAGE_STATS_KEY);
+      if (raw) return Object.assign(defaults, JSON.parse(raw));
+    } catch (error) {
+      console.warn("No se pudieron leer las estadísticas de transporte.", error);
+    }
+    return defaults;
+  }
+
+  function formatSeconds(ms) {
+    return `${(ms / 1000).toFixed(1)}s`;
+  }
+
+  function formatDuration(ms) {
+    const totalSeconds = Math.round(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${String(seconds).padStart(2, "0")}`;
+  }
+
+  function stopTimer() {
+    if (state.timerInterval) {
+      clearInterval(state.timerInterval);
+      state.timerInterval = null;
+    }
+  }
+
+  function startTimer() {
+    stopTimer();
+    state.timerStart = Date.now();
+    els.timer.textContent = formatSeconds(0);
+    state.timerInterval = setInterval(() => {
+      els.timer.textContent = formatSeconds(Date.now() - state.timerStart);
+    }, 100);
   }
 
   function saveStats() {
@@ -90,10 +125,14 @@ const TransportMode = (function () {
       ? Math.round((state.stats.correct / state.stats.chordsAnswered) * 100)
       : 0;
 
+    const avgTimeMs = state.stats.exercises ? state.stats.totalTimeMs / state.stats.exercises : 0;
+
     els.exercises.textContent = state.stats.exercises;
     els.accuracy.textContent = `${accuracy}%`;
     els.streak.textContent = state.stats.currentStreak;
     els.bestStreak.textContent = state.stats.bestStreak;
+    els.avgTime.textContent = formatSeconds(avgTimeMs);
+    els.totalTime.textContent = formatDuration(state.stats.totalTimeMs);
 
     renderTranspositionHistory();
   }
@@ -114,6 +153,8 @@ const TransportMode = (function () {
   function generateExercise() {
     state.answered = false;
     els.result.classList.add("hidden");
+    els.elapsedTime.textContent = "";
+    stopTimer();
 
     if (state.scales.length < 2) {
       els.error.textContent =
@@ -136,6 +177,7 @@ const TransportMode = (function () {
 
     state.current = { fromScale, toScale, chords: transposed };
     renderExercise();
+    startTimer();
   }
 
   function renderExercise() {
@@ -198,6 +240,11 @@ const TransportMode = (function () {
     if (state.answered) return;
     state.answered = true;
 
+    const elapsedMs = Date.now() - state.timerStart;
+    stopTimer();
+    els.timer.textContent = formatSeconds(elapsedMs);
+    state.stats.totalTimeMs += elapsedMs;
+
     const { fromScale, toScale, chords } = state.current;
     const pairKey = `${fromScale.tonic}→${toScale.tonic}`;
     state.stats.byTransposition[pairKey] = state.stats.byTransposition[pairKey] || {
@@ -252,6 +299,7 @@ const TransportMode = (function () {
 
     const percentage = Math.round((correctCount / chords.length) * 100);
     els.resultSummary.textContent = `${correctCount} / ${chords.length} correctas · ${percentage}%`;
+    els.elapsedTime.textContent = `⏱ Resuelto en ${formatSeconds(elapsedMs)}`;
 
     if (state.config.transport && state.config.transport.showDegreesAfterAnswer !== false) {
       els.resultRoman.textContent = `Progresión: ${chords.map((c) => c.originalDegree.roman).join(" - ")}`;
@@ -276,7 +324,7 @@ const TransportMode = (function () {
   }
 
   function teardown() {
-    // No timers/intervals to clear in transport mode.
+    stopTimer();
   }
 
   async function start() {
