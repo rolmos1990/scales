@@ -1,32 +1,31 @@
-const TransportMode = (function () {
-  const STORAGE_STATS_KEY = "transportStats";
-  const STORAGE_DIFFICULTY_KEY = "transportDifficulty";
+const ChordsFromDegreesMode = (function () {
+  const STORAGE_STATS_KEY = "chordsFromDegreesStats";
+  const STORAGE_DIFFICULTY_KEY = "chordsFromDegreesDifficulty";
 
   const els = {
-    difficultyRow: document.querySelector("#difficultyRow"),
-    exercises: document.querySelector("#tExercises"),
-    accuracy: document.querySelector("#tAccuracy"),
-    streak: document.querySelector("#tStreak"),
-    bestStreak: document.querySelector("#tBestStreak"),
-    error: document.querySelector("#transportError"),
-    content: document.querySelector("#transportContent"),
-    fromKeyBadge: document.querySelector("#fromKeyBadge"),
-    toKeyBadge: document.querySelector("#toKeyBadge"),
-    originProgression: document.querySelector("#originProgression"),
-    timer: document.querySelector("#transportTimer"),
-    avgTime: document.querySelector("#tAvgTime"),
-    totalTime: document.querySelector("#tTotalTime"),
-    form: document.querySelector("#transportForm"),
-    chordRows: document.querySelector("#chordRows"),
-    checkBtn: document.querySelector("#transportCheckBtn"),
-    result: document.querySelector("#transportResult"),
-    resultSummary: document.querySelector("#transportResultSummary"),
-    elapsedTime: document.querySelector("#transportElapsedTime"),
-    resultRoman: document.querySelector("#transportRoman"),
-    nextBtn: document.querySelector("#transportNextBtn"),
-    backBtn: document.querySelector("#transportBackBtn"),
-    historyText: document.querySelector("#transpositionHistoryText"),
-    gameCard: document.querySelector("#transportGameCard")
+    difficultyRow: document.querySelector("#cfdDifficultyRow"),
+    exercises: document.querySelector("#cfdExercises"),
+    accuracy: document.querySelector("#cfdAccuracy"),
+    streak: document.querySelector("#cfdStreak"),
+    bestStreak: document.querySelector("#cfdBestStreak"),
+    error: document.querySelector("#cfdError"),
+    content: document.querySelector("#cfdContent"),
+    keyBadge: document.querySelector("#cfdKeyBadge"),
+    originProgression: document.querySelector("#cfdProgression"),
+    timer: document.querySelector("#cfdTimer"),
+    avgTime: document.querySelector("#cfdAvgTime"),
+    totalTime: document.querySelector("#cfdTotalTime"),
+    form: document.querySelector("#cfdForm"),
+    chordRows: document.querySelector("#cfdChordRows"),
+    checkBtn: document.querySelector("#cfdCheckBtn"),
+    result: document.querySelector("#cfdResult"),
+    resultSummary: document.querySelector("#cfdResultSummary"),
+    elapsedTime: document.querySelector("#cfdElapsedTime"),
+    resultRoman: document.querySelector("#cfdRoman"),
+    nextBtn: document.querySelector("#cfdNextBtn"),
+    backBtn: document.querySelector("#cfdBackBtn"),
+    historyText: document.querySelector("#cfdHistoryText"),
+    gameCard: document.querySelector("#cfdGameCard")
   };
 
   const state = {
@@ -49,13 +48,13 @@ const TransportMode = (function () {
       currentStreak: 0,
       bestStreak: 0,
       totalTimeMs: 0,
-      byTransposition: {}
+      byKey: {}
     };
     try {
       const raw = localStorage.getItem(STORAGE_STATS_KEY);
       if (raw) return Object.assign(defaults, JSON.parse(raw));
     } catch (error) {
-      console.warn("No se pudieron leer las estadísticas de transporte.", error);
+      console.warn("No se pudieron leer las estadísticas de acordes desde grados.", error);
     }
     return defaults;
   }
@@ -71,16 +70,16 @@ const TransportMode = (function () {
     return `${minutes}:${String(seconds).padStart(2, "0")}`;
   }
 
-  function scrollToTop() {
-    if (els.gameCard) {
-      els.gameCard.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }
-
   function stopTimer() {
     if (state.timerInterval) {
       clearInterval(state.timerInterval);
       state.timerInterval = null;
+    }
+  }
+
+  function scrollToTop() {
+    if (els.gameCard) {
+      els.gameCard.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   }
 
@@ -141,11 +140,11 @@ const TransportMode = (function () {
     els.avgTime.textContent = formatSeconds(avgTimeMs);
     els.totalTime.textContent = formatDuration(state.stats.totalTimeMs);
 
-    renderTranspositionHistory();
+    renderKeyHistory();
   }
 
-  function renderTranspositionHistory() {
-    const entries = Object.entries(state.stats.byTransposition).filter(([, v]) => v.total > 0);
+  function renderKeyHistory() {
+    const entries = Object.entries(state.stats.byKey).filter(([, v]) => v.total > 0);
     if (!entries.length) {
       els.historyText.textContent = "Aún no hay datos suficientes.";
       return;
@@ -163,9 +162,9 @@ const TransportMode = (function () {
     els.elapsedTime.textContent = "";
     stopTimer();
 
-    if (state.scales.length < 2) {
+    if (!state.scales.length) {
       els.error.textContent =
-        "Necesitas al menos 2 tonalidades habilitadas en config/game-config.json para practicar transporte.";
+        "Necesitas al menos 1 tonalidad habilitada en config/game-config.json para practicar esto.";
       els.error.classList.remove("hidden");
       els.content.classList.add("hidden");
       return;
@@ -175,25 +174,21 @@ const TransportMode = (function () {
     els.content.classList.remove("hidden");
     scrollToTop();
 
-    const fromScale = randomItem(state.scales);
-    const toScale = randomItem(state.scales.filter((scale) => scale.tonic !== fromScale.tonic));
+    const scale = randomItem(state.scales);
     const degrees = MusicTheory.generateProgression(state.difficulty);
-    const diatonicFrom = MusicTheory.getDiatonicChords(fromScale);
-    const originChords = degrees.map((d) => diatonicFrom[d.degree - 1]);
-    const originSymbols = originChords.map((chord) => chord.symbol);
-    const transposed = MusicTheory.transposeProgression(originSymbols, fromScale, toScale);
+    const diatonic = MusicTheory.getDiatonicChords(scale);
+    const chords = degrees.map((d) => diatonic[d.degree - 1]);
 
-    state.current = { fromScale, toScale, chords: transposed };
+    state.current = { scale, chords };
     renderExercise();
     startTimer();
   }
 
   function renderExercise() {
-    const { fromScale, toScale, chords } = state.current;
+    const { scale, chords } = state.current;
 
-    els.fromKeyBadge.textContent = fromScale.tonic;
-    els.toKeyBadge.textContent = toScale.tonic;
-    els.originProgression.textContent = chords.map((c) => c.original).join(" – ");
+    els.keyBadge.textContent = scale.tonic;
+    els.originProgression.textContent = chords.map((c) => c.roman).join(" – ");
 
     els.chordRows.innerHTML = "";
     chords.forEach((chord, index) => {
@@ -202,7 +197,7 @@ const TransportMode = (function () {
 
       const origin = document.createElement("span");
       origin.className = "chord-origin";
-      origin.textContent = chord.original;
+      origin.textContent = chord.roman;
 
       const arrow = document.createElement("span");
       arrow.className = "chord-row-arrow";
@@ -213,8 +208,8 @@ const TransportMode = (function () {
       input.className = "chord-input";
       input.dataset.index = String(index);
       input.autocomplete = "off";
-      input.placeholder = "Acorde transportado";
-      input.setAttribute("aria-label", `Transporte de ${chord.original}`);
+      input.placeholder = "Acorde";
+      input.setAttribute("aria-label", `Acorde para el grado ${chord.roman}`);
 
       input.addEventListener("keydown", (event) => {
         if (event.key === "Enter") {
@@ -277,19 +272,16 @@ const TransportMode = (function () {
     els.timer.textContent = formatSeconds(elapsedMs);
     state.stats.totalTimeMs += elapsedMs;
 
-    const { fromScale, toScale, chords } = state.current;
-    const pairKey = `${fromScale.tonic}→${toScale.tonic}`;
-    state.stats.byTransposition[pairKey] = state.stats.byTransposition[pairKey] || {
-      correct: 0,
-      total: 0
-    };
+    const { scale, chords } = state.current;
+    const keyName = scale.tonic;
+    state.stats.byKey[keyName] = state.stats.byKey[keyName] || { correct: 0, total: 0 };
 
     let correctCount = 0;
 
     chords.forEach((chord, index) => {
       const input = els.chordRows.querySelector(`.chord-input[data-index="${index}"]`);
       const resultEl = input.parentElement.querySelector(".chord-result");
-      const isCorrect = chordsMatch(input.value, chord.target.symbol);
+      const isCorrect = chordsMatch(input.value, chord.symbol);
 
       input.disabled = true;
       input.classList.toggle("input-correct", isCorrect);
@@ -300,23 +292,16 @@ const TransportMode = (function () {
         resultEl.textContent = "✓";
         resultEl.className = "chord-result correct";
       } else {
-        resultEl.textContent = `✗ Correcto: ${chord.target.symbol}`;
+        resultEl.textContent = `✗ Correcto: ${chord.symbol}`;
         resultEl.className = "chord-result incorrect";
       }
 
-      if (state.config.transport && state.config.transport.showDegreesAfterAnswer !== false) {
-        const romanNote = document.createElement("span");
-        romanNote.className = "chord-roman";
-        romanNote.textContent = `(${chord.originalDegree.roman})`;
-        resultEl.appendChild(romanNote);
-      }
-
       state.stats.chordsAnswered += 1;
-      state.stats.byTransposition[pairKey].total += 1;
+      state.stats.byKey[keyName].total += 1;
 
       if (isCorrect) {
         state.stats.correct += 1;
-        state.stats.byTransposition[pairKey].correct += 1;
+        state.stats.byKey[keyName].correct += 1;
         state.stats.currentStreak += 1;
         state.stats.bestStreak = Math.max(state.stats.bestStreak, state.stats.currentStreak);
       } else {
@@ -333,8 +318,8 @@ const TransportMode = (function () {
     els.resultSummary.textContent = `${correctCount} / ${chords.length} correctas · ${percentage}%`;
     els.elapsedTime.textContent = `⏱ Resuelto en ${formatSeconds(elapsedMs)}`;
 
-    if (state.config.transport && state.config.transport.showDegreesAfterAnswer !== false) {
-      els.resultRoman.textContent = `Progresión: ${chords.map((c) => c.originalDegree.roman).join(" - ")}`;
+    if (state.config.chordsFromDegrees && state.config.chordsFromDegrees.showChordsAfterAnswer !== false) {
+      els.resultRoman.textContent = `Progresión: ${chords.map((c) => c.symbol).join(" - ")}`;
       els.resultRoman.classList.remove("hidden");
     } else {
       els.resultRoman.classList.add("hidden");
@@ -349,7 +334,7 @@ const TransportMode = (function () {
     if (event.key !== "Enter") return;
     if (!state.answered) return;
     if (els.content.classList.contains("hidden")) return;
-    if (document.querySelector("#transportView").classList.contains("hidden")) return;
+    if (document.querySelector("#chordsFromDegreesView").classList.contains("hidden")) return;
 
     event.preventDefault();
     generateExercise();
@@ -367,7 +352,9 @@ const TransportMode = (function () {
 
       state.config = data.config;
       state.scales = data.scales;
-      state.difficulty = loadDifficulty((data.config.transport && data.config.transport.difficulty) || 2);
+      state.difficulty = loadDifficulty(
+        (data.config.chordsFromDegrees && data.config.chordsFromDegrees.difficulty) || 2
+      );
       setDifficulty(state.difficulty);
 
       updateStatsUI();

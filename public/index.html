@@ -28,6 +28,20 @@
         <p>Practica progresiones y transpórtalas entre tonalidades</p>
         <button id="playTransportBtn" class="primary-btn">Jugar</button>
       </article>
+
+      <article class="mode-card">
+        <div class="mode-icon">🔢</div>
+        <h2>Identificar Grados</h2>
+        <p>Identifica el grado de cada acorde dentro de la tonalidad</p>
+        <button id="playDegreesBtn" class="primary-btn">Jugar</button>
+      </article>
+
+      <article class="mode-card">
+        <div class="mode-icon">🎹</div>
+        <h2>Identificar Acordes desde Grados</h2>
+        <p>Dada una tónica y una serie de grados, escribe los acordes</p>
+        <button id="playChordsFromDegreesBtn" class="primary-btn">Jugar</button>
+      </article>
     </div>
   </section>
 
@@ -208,9 +222,179 @@
     </section>
   </main>
 
+  <main class="app-shell hidden" id="degreesView">
+    <section class="hero">
+      <div>
+        <span class="eyebrow">IDENTIFICACIÓN DE GRADOS</span>
+        <h1>Identificar Grados</h1>
+        <p>Escribe la posición de cada acorde dentro de la tonalidad indicada.</p>
+      </div>
+      <div class="hero-actions">
+        <button id="degreesBackBtn" class="ghost-btn">← Menú</button>
+      </div>
+    </section>
+
+    <section class="difficulty-row" id="degreesDifficultyRow">
+      <span class="difficulty-label">Dificultad:</span>
+      <button class="difficulty-btn" data-difficulty="1">Nivel 1 · Básico</button>
+      <button class="difficulty-btn" data-difficulty="2">Nivel 2 · Normal</button>
+      <button class="difficulty-btn" data-difficulty="3">Nivel 3 · Avanzado</button>
+    </section>
+
+    <section class="stats-grid">
+      <article class="stat-card">
+        <span>Ejercicios</span>
+        <strong id="dExercises">0</strong>
+      </article>
+      <article class="stat-card">
+        <span>Precisión</span>
+        <strong id="dAccuracy">0%</strong>
+      </article>
+      <article class="stat-card">
+        <span>Racha actual</span>
+        <strong id="dStreak">0</strong>
+      </article>
+      <article class="stat-card">
+        <span>Mejor racha</span>
+        <strong id="dBestStreak">0</strong>
+      </article>
+      <article class="stat-card">
+        <span>Tiempo promedio</span>
+        <strong id="dAvgTime">0.0s</strong>
+      </article>
+      <article class="stat-card">
+        <span>Tiempo total</span>
+        <strong id="dTotalTime">0:00</strong>
+      </article>
+    </section>
+
+    <section class="game-card" id="degreesGameCard">
+      <div id="degreesError" class="feedback incorrect hidden"></div>
+
+      <div id="degreesContent">
+        <div class="transport-timer">⏱ <span id="degreesTimer">0.0s</span></div>
+
+        <div class="transport-keys">
+          <div class="key-badge accent">
+            <span>TONALIDAD</span>
+            <strong id="degreesKeyBadge">C</strong>
+          </div>
+        </div>
+
+        <div id="degreesProgression" class="origin-progression"></div>
+        <p class="helper degrees-hint">Escribe el grado como número (1-7) o número romano (I, ii, IV…).</p>
+
+        <form id="degreesForm">
+          <div id="degreesChordRows" class="chord-rows"></div>
+          <button type="submit" id="degreesCheckBtn" class="primary-btn">Comprobar</button>
+        </form>
+
+        <div id="degreesResult" class="transport-result hidden">
+          <p id="degreesResultSummary" class="result-summary"></p>
+          <p id="degreesElapsedTime" class="result-time"></p>
+          <p id="degreesRoman" class="result-roman"></p>
+          <button id="degreesNextBtn" class="next-btn">Siguiente progresión</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="scale-preview" id="degreesHistory">
+      <div>
+        <span class="eyebrow">PRECISIÓN POR TONALIDAD</span>
+        <h3 id="degreesHistoryText">Aún no hay datos suficientes.</h3>
+      </div>
+    </section>
+  </main>
+
+  <main class="app-shell hidden" id="chordsFromDegreesView">
+    <section class="hero">
+      <div>
+        <span class="eyebrow">ACORDES DESDE GRADOS</span>
+        <h1>Identificar Acordes desde Grados</h1>
+        <p>Dada la tonalidad y los grados de la progresión, escribe cada acorde.</p>
+      </div>
+      <div class="hero-actions">
+        <button id="cfdBackBtn" class="ghost-btn">← Menú</button>
+      </div>
+    </section>
+
+    <section class="difficulty-row" id="cfdDifficultyRow">
+      <span class="difficulty-label">Dificultad:</span>
+      <button class="difficulty-btn" data-difficulty="1">Nivel 1 · Básico</button>
+      <button class="difficulty-btn" data-difficulty="2">Nivel 2 · Normal</button>
+      <button class="difficulty-btn" data-difficulty="3">Nivel 3 · Avanzado</button>
+    </section>
+
+    <section class="stats-grid">
+      <article class="stat-card">
+        <span>Ejercicios</span>
+        <strong id="cfdExercises">0</strong>
+      </article>
+      <article class="stat-card">
+        <span>Precisión</span>
+        <strong id="cfdAccuracy">0%</strong>
+      </article>
+      <article class="stat-card">
+        <span>Racha actual</span>
+        <strong id="cfdStreak">0</strong>
+      </article>
+      <article class="stat-card">
+        <span>Mejor racha</span>
+        <strong id="cfdBestStreak">0</strong>
+      </article>
+      <article class="stat-card">
+        <span>Tiempo promedio</span>
+        <strong id="cfdAvgTime">0.0s</strong>
+      </article>
+      <article class="stat-card">
+        <span>Tiempo total</span>
+        <strong id="cfdTotalTime">0:00</strong>
+      </article>
+    </section>
+
+    <section class="game-card" id="cfdGameCard">
+      <div id="cfdError" class="feedback incorrect hidden"></div>
+
+      <div id="cfdContent">
+        <div class="transport-timer">⏱ <span id="cfdTimer">0.0s</span></div>
+
+        <div class="transport-keys">
+          <div class="key-badge accent">
+            <span>TONALIDAD</span>
+            <strong id="cfdKeyBadge">C</strong>
+          </div>
+        </div>
+
+        <div id="cfdProgression" class="origin-progression"></div>
+        <p class="helper degrees-hint">Escribe el acorde correspondiente a cada grado (ej: Am, F#dim).</p>
+
+        <form id="cfdForm">
+          <div id="cfdChordRows" class="chord-rows"></div>
+          <button type="submit" id="cfdCheckBtn" class="primary-btn">Comprobar</button>
+        </form>
+
+        <div id="cfdResult" class="transport-result hidden">
+          <p id="cfdResultSummary" class="result-summary"></p>
+          <p id="cfdElapsedTime" class="result-time"></p>
+          <p id="cfdRoman" class="result-roman"></p>
+          <button id="cfdNextBtn" class="next-btn">Siguiente progresión</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="scale-preview" id="cfdHistory">
+      <div>
+        <span class="eyebrow">PRECISIÓN POR TONALIDAD</span>
+        <h3 id="cfdHistoryText">Aún no hay datos suficientes.</h3>
+      </div>
+    </section>
+  </main>
+
   <script src="js/music-theory.js"></script>
   <script src="app.js"></script>
   <script src="js/transport-mode.js"></script>
+  <script src="js/degrees-mode.js"></script>
+  <script src="js/chords-from-degrees-mode.js"></script>
   <script src="js/menu.js"></script>
 </body>
 </html>

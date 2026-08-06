@@ -2,7 +2,9 @@
   "enabledScales": [
     "C",
     "D",
-    "E"
+    "E",
+    "F",
+    "G"
   ],
   "questionTypes": [
     "degreeToNote",
@@ -24,5 +26,13 @@
   "transport": {
     "difficulty": 2,
     "showDegreesAfterAnswer": true
+  },
+  "degrees": {
+    "difficulty": 2,
+    "showRomanAfterAnswer": true
+  },
+  "chordsFromDegrees": {
+    "difficulty": 2,
+    "showChordsAfterAnswer": true
   }
 }

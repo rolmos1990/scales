@@ -121,6 +121,27 @@
     return index === -1 ? null : index + 1;
   }
 
+  const ROMAN_VALUES = { I: 1, II: 2, III: 3, IV: 4, V: 5, VI: 6, VII: 7 };
+
+  /**
+   * Interpreta el grado escrito por el usuario. Acepta el número de posición
+   * ("6", "6°") o el número romano en cualquier caja ("vi", "VI", "vii°", "viidim").
+   * Devuelve 1-7 o null si no se entiende.
+   */
+  function parseDegreeAnswer(value) {
+    const cleaned = String(value || "")
+      .trim()
+      .toUpperCase()
+      .replace(/[°ºO]+$/, "")
+      .replace(/DIM$/, "")
+      .replace(/[\s.\-]/g, "");
+    if (!cleaned) return null;
+
+    if (/^[1-7]$/.test(cleaned)) return Number(cleaned);
+    if (Object.prototype.hasOwnProperty.call(ROMAN_VALUES, cleaned)) return ROMAN_VALUES[cleaned];
+    return null;
+  }
+
   // Patrones de progresiones por grados, agrupados por nivel de dificultad.
   const PROGRESSION_PATTERNS = {
     1: [
@@ -167,6 +188,7 @@
     transposeChord,
     transposeProgression,
     generateProgression,
-    romanToDegree
+    romanToDegree,
+    parseDegreeAnswer
   };
 })();

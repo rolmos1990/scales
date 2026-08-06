@@ -1,33 +1,44 @@
 (function () {
   const mainMenu = document.querySelector("#mainMenu");
-  const scalesView = document.querySelector("#scalesView");
-  const transportView = document.querySelector("#transportView");
-  const playScalesBtn = document.querySelector("#playScalesBtn");
-  const playTransportBtn = document.querySelector("#playTransportBtn");
+  const views = [
+    document.querySelector("#scalesView"),
+    document.querySelector("#transportView"),
+    document.querySelector("#degreesView"),
+    document.querySelector("#chordsFromDegreesView")
+  ];
+
+  const modes = [
+    { btn: document.querySelector("#playScalesBtn"), view: document.querySelector("#scalesView"), mode: ScalesMode },
+    { btn: document.querySelector("#playTransportBtn"), view: document.querySelector("#transportView"), mode: TransportMode },
+    { btn: document.querySelector("#playDegreesBtn"), view: document.querySelector("#degreesView"), mode: DegreesMode },
+    {
+      btn: document.querySelector("#playChordsFromDegreesBtn"),
+      view: document.querySelector("#chordsFromDegreesView"),
+      mode: ChordsFromDegreesMode
+    }
+  ];
+
+  function hideAllViews() {
+    views.forEach((view) => view.classList.add("hidden"));
+  }
 
   function showView(view) {
     mainMenu.classList.add("hidden");
-    scalesView.classList.add("hidden");
-    transportView.classList.add("hidden");
+    hideAllViews();
     view.classList.remove("hidden");
   }
 
   function showMenu() {
-    ScalesMode.teardown();
-    TransportMode.teardown();
-    scalesView.classList.add("hidden");
-    transportView.classList.add("hidden");
+    modes.forEach(({ mode }) => mode.teardown());
+    hideAllViews();
     mainMenu.classList.remove("hidden");
   }
 
-  playScalesBtn.addEventListener("click", () => {
-    showView(scalesView);
-    ScalesMode.start();
-  });
-
-  playTransportBtn.addEventListener("click", () => {
-    showView(transportView);
-    TransportMode.start();
+  modes.forEach(({ btn, view, mode }) => {
+    btn.addEventListener("click", () => {
+      showView(view);
+      mode.start();
+    });
   });
 
   document.addEventListener("app:back-to-menu", showMenu);

@@ -282,7 +282,7 @@ code {
 
 .mode-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 24px;
 }
 
@@ -465,9 +465,21 @@ code {
   font-weight: 500;
 }
 
-#transportForm .primary-btn {
+#transportForm .primary-btn,
+#degreesForm .primary-btn {
   display: block;
   margin: 0 auto;
+}
+
+/* Modo Identificar Grados */
+#degreesProgression {
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.degrees-hint {
+  text-align: center;
+  margin: 0 0 24px;
 }
 
 .transport-result {
