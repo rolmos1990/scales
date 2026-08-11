@@ -165,10 +165,35 @@ const GuitarNotesMode = (function () {
 
   // --- Diapasón (diagrama: cuerda 1/fina arriba, cuerda 6/gruesa abajo, como una tablatura) ---
 
+  const FRET_WIDE_PX = 52; // ancho de los trastes 0-11, como el tramo ancho de una guitarra real
+  const FRET_MIN_PX = 26; // ancho mínimo al que se puede angostar en los trastes agudos
+
+  // Del traste 12 en adelante se va angostando (como el diapasón real, donde los trastes
+  // agudos quedan más juntos); antes de eso se mantiene ancho y cómodo para tocar.
+  function fretColumnWidth(fret) {
+    if (fret <= 11) return FRET_WIDE_PX;
+    const ratio = Math.pow(2, -(fret - 11) / 12);
+    return Math.max(FRET_MIN_PX, Math.round(FRET_WIDE_PX * ratio));
+  }
+
+  function buildGridCols(fretsCount) {
+    const cols = [];
+    for (let f = 0; f <= fretsCount; f++) cols.push(`${fretColumnWidth(f)}px`);
+    return `40px ${cols.join(" ")}`;
+  }
+
+  // Posición X (px) del borde derecho de la celda del traste `fret` — ahí va el trastecito
+  // metálico que lo cierra.
+  function fretBoundaryX(fret) {
+    let x = 40;
+    for (let i = 0; i <= fret; i++) x += fretColumnWidth(i);
+    return x;
+  }
+
   function renderFretboard() {
     const gn = state.gnConfig;
     const enabledSet = new Set(gn.enabledStrings);
-    const gridCols = `40px repeat(${gn.fretsCount + 1}, minmax(34px, 1fr))`;
+    const gridCols = buildGridCols(gn.fretsCount);
 
     els.fretboardInner.innerHTML = "";
 
@@ -194,7 +219,6 @@ const GuitarNotesMode = (function () {
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "fret-cell";
-        if (f === 0) btn.classList.add("open-string");
         btn.dataset.string = String(stringNum);
         btn.dataset.fret = String(f);
         btn.dataset.note = note;
@@ -227,6 +251,26 @@ const GuitarNotesMode = (function () {
       }
     }
     stringsWrap.appendChild(markers);
+
+    // Trastes metálicos: una barrita por cada división entre trastes (del 1 en adelante; la
+    // del 0 es la cejuela marrón). Van debajo de las cuerdas pero encima del diapasón/puntos,
+    // igual que en una guitarra real.
+    const frets = document.createElement("div");
+    frets.className = "fretboard-frets";
+    for (let f = 1; f <= gn.fretsCount; f++) {
+      const wire = document.createElement("div");
+      wire.className = "fret-wire";
+      wire.style.left = `${fretBoundaryX(f)}px`;
+      frets.appendChild(wire);
+    }
+    stringsWrap.appendChild(frets);
+
+    // Cejuela: barrita marrón entre el traste 0 y el 1, para distinguir la cuerda al aire
+    // (nota natural, a la izquierda) de los trastes pisados (a la derecha).
+    const nutBar = document.createElement("div");
+    nutBar.className = "fretboard-nut";
+    nutBar.style.left = `${fretBoundaryX(0)}px`;
+    stringsWrap.appendChild(nutBar);
 
     els.fretboardInner.appendChild(stringsWrap);
 

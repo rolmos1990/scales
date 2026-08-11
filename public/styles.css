@@ -563,7 +563,7 @@ code {
 }
 
 .fret-row:not(.number-row) {
-  z-index: 1; /* por encima de .fretboard-markers, para que la cuerda "tape" el punto */
+  z-index: 2; /* por encima de los puntos y los trastes metálicos */
 }
 
 .fret-row:not(.number-row)::before {
@@ -581,16 +581,52 @@ code {
 .fret-cell {
   position: relative;
   height: 100%;
-  margin: 0 1px;
+  margin: 0;
   border: 0;
-  border-right: 2px solid rgba(220,220,225,.4);
   background: transparent;
   cursor: pointer;
   z-index: 1;
   padding: 0;
 }
 
-.fret-cell.open-string { border-left: 4px solid rgba(240,240,245,.8); }
+/* Trastes metálicos: una barra brillante (con reflejo) por cada división real entre trastes,
+   superpuesta sobre el diapasón — igual que el alambre de un traste real. Van debajo de las
+   cuerdas (que "pasan por encima") pero encima del diapasón y los puntos. */
+.fretboard-frets {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.fret-wire {
+  position: absolute;
+  top: 1px;
+  bottom: 1px;
+  width: 4px;
+  transform: translateX(-50%);
+  border-radius: 2px;
+  background: linear-gradient(90deg, #7c8085 0%, #eef1f3 35%, #ffffff 50%, #eef1f3 65%, #7c8085 100%);
+  box-shadow: 0 0 1px rgba(0,0,0,.4);
+}
+
+/* Cejuela: barra sólida marrón que cruza las 6 cuerdas entre el traste 0 y el 1 (separando
+   la cuerda al aire/nota natural de los trastes pisados). El "left" real lo fija el JS según
+   el ancho del traste 0; este es solo el valor de respaldo. Va por encima de todo (cuerdas,
+   trastes y puntos) para que se note claramente. */
+.fretboard-nut {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 92px;
+  width: 7px;
+  transform: translateX(-50%); /* centra la barra justo sobre la línea, no a partir de ella */
+  border-radius: 3px;
+  background: linear-gradient(180deg, #9c6a3e, #6b4327);
+  box-shadow: 0 0 0 1px rgba(0,0,0,.35), inset 0 0 3px rgba(0,0,0,.3);
+  z-index: 3;
+  pointer-events: none;
+}
 
 .fret-cell::after {
   content: "";
