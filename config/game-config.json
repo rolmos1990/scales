@@ -37,6 +37,7 @@
     "difficulty": 2,
     "fretsCount": 15,
     "questionsPerRound": 15,
-    "timePerQuestionSeconds": 0
+    "timePerQuestionSeconds": 0,
+    "soundEnabled": true
   }
 }

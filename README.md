@@ -110,6 +110,13 @@ Orientación tipo tablatura: arriba la cuerda 1 (Mi agudo, la más fina), abajo 
   scroll horizontal, así que se puede subir hasta 24 (lo típico en una guitarra eléctrica).
 - `timePerQuestionSeconds`: `0` no pone límite y solo cronometra cuánto tardas; un valor mayor a
   `0` inicia una cuenta regresiva y da la pregunta por fallada si se agota.
+- `soundEnabled`: si suena cada traste al presionarlo (valor inicial; el botón 🔊 dentro del
+  juego lo puede alternar y queda guardado en el navegador).
+
+Al presionar un traste suena la nota real (síntesis de cuerda pulsada tipo Karplus-Strong vía
+Web Audio API, generada en el navegador — sin muestras de audio ni conexión a internet) afinada
+a la altura exacta de esa cuerda y traste. Si fallas, además suena la nota correcta un instante
+después para reforzar el oído.
 
 ## Banco de escalas
 

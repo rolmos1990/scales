@@ -562,7 +562,11 @@ code {
   text-align: center;
 }
 
-.fret-row:not(.marker-row):not(.number-row)::before {
+.fret-row:not(.number-row) {
+  z-index: 1; /* por encima de .fretboard-markers, para que la cuerda "tape" el punto */
+}
+
+.fret-row:not(.number-row)::before {
   content: "";
   position: absolute;
   left: 40px;
@@ -623,23 +627,31 @@ code {
   box-shadow: 0 0 0 3px rgba(255,141,141,.25);
 }
 
-.marker-row {
-  height: 20px;
-  margin-bottom: 2px;
+/* Envoltorio de las 6 cuerdas: "relative" para que los puntos de referencia (.fretboard-markers)
+   se superpongan exactamente detrás de ellas, como el fondo del diapasón real. */
+.fretboard-strings-wrap {
+  position: relative;
 }
 
-.marker-cell {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
+.fretboard-markers {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-rows: repeat(6, 1fr);
+  pointer-events: none;
+  z-index: 0;
 }
 
-.marker-cell span {
-  width: 7px;
-  height: 7px;
+/* Cada punto se posiciona con grid-column/grid-row (ver JS) y se autocentra en la celda con
+   place-self: el simple cae justo entre la 3ª y 4ª cuerda; los del traste 12/24 caen uno entre
+   la 2ª-3ª y otro entre la 4ª-5ª, igual que en una guitarra real. */
+.fret-marker-dot {
+  place-self: center;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background: rgba(232,217,184,.5);
+  background: radial-gradient(circle at 35% 30%, #fdf8ec, #cbb98a 75%);
+  box-shadow: 0 1px 2px rgba(0,0,0,.45);
 }
 
 .number-row {

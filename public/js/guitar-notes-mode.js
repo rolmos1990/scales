@@ -1,6 +1,7 @@
 const GuitarNotesMode = (function () {
   const STORAGE_STATS_KEY = "guitarNotesStats";
   const STORAGE_DIFFICULTY_KEY = "guitarNotesDifficulty";
+  const STORAGE_SOUND_KEY = "guitarNotesSound";
 
   const AUTO_NEXT_DELAY_CORRECT_MS = 1400;
   const AUTO_NEXT_DELAY_INCORRECT_MS = 2600;
@@ -13,6 +14,14 @@ const GuitarNotesMode = (function () {
   // la 6 (Mi grave, la más gruesa) abajo.
   const STRING_OPEN_NOTES = { 1: "E", 2: "B", 3: "G", 4: "D", 5: "A", 6: "E" };
   const STRING_ORDER_TOP_TO_BOTTOM = [1, 2, 3, 4, 5, 6];
+
+  // Frecuencia real (Hz, afinación estándar A440) de cada cuerda al aire, para sintetizar el
+  // sonido con la altura exacta de cada traste (no solo el nombre de la nota).
+  const STRING_OPEN_FREQ = { 1: 329.6276, 2: 246.9417, 3: 195.9977, 4: 146.8324, 5: 110.0, 6: 82.4069 };
+
+  function getFrequencyAtFret(stringNum, fret) {
+    return STRING_OPEN_FREQ[stringNum] * Math.pow(2, fret / 12);
+  }
 
   // Trastes con inlay en una guitarra estándar: punto simple en 3,5,7,9,15,17,19,21;
   // doble punto en 12 y 24 (marca la octava).
@@ -44,6 +53,7 @@ const GuitarNotesMode = (function () {
     roundAvgTime: document.querySelector("#gnRoundAvgTime"),
     newRoundBtn: document.querySelector("#gnNewRoundBtn"),
     backBtn: document.querySelector("#guitarNotesBackBtn"),
+    soundBtn: document.querySelector("#guitarNotesSoundBtn"),
     historyText: document.querySelector("#guitarNotesHistoryText"),
     gameCard: document.querySelector("#guitarNotesGameCard")
   };
@@ -52,6 +62,7 @@ const GuitarNotesMode = (function () {
     config: null,
     gnConfig: null,
     difficulty: 2,
+    soundOn: true,
     current: null,
     answered: false,
     timerStart: null,
@@ -161,28 +172,12 @@ const GuitarNotesMode = (function () {
 
     els.fretboardInner.innerHTML = "";
 
-    // Fila de marcadores (los puntos de referencia del diapasón real: 3,5,7,9,15,17,19,21
-    // simples, 12 y 24 dobles), arriba de todo, igual que en un diagrama de tablatura.
-    const markerRow = document.createElement("div");
-    markerRow.className = "fret-row marker-row";
-    markerRow.style.gridTemplateColumns = gridCols;
-    markerRow.appendChild(document.createElement("div")).className = "string-label";
-    for (let f = 0; f <= gn.fretsCount; f++) {
-      const cell = document.createElement("div");
-      cell.className = "marker-cell";
-      if (DOUBLE_MARKER_FRETS.has(f)) {
-        cell.classList.add("marker-double");
-        cell.append(document.createElement("span"), document.createElement("span"));
-      } else if (SINGLE_MARKER_FRETS.has(f)) {
-        cell.classList.add("marker-single");
-        cell.appendChild(document.createElement("span"));
-      }
-      markerRow.appendChild(cell);
-    }
-    els.fretboardInner.appendChild(markerRow);
+    // Envoltorio de las 6 cuerdas: se queda "relative" para que los puntos de referencia se
+    // dibujen encima de él, en el fondo del diapasón (detrás de las cuerdas), en vez de en
+    // una fila aparte.
+    const stringsWrap = document.createElement("div");
+    stringsWrap.className = "fretboard-strings-wrap";
 
-    // Filas de cuerdas: cada celda es el espacio clicable de "ese traste" en esa cuerda
-    // (el traste 0 es la cuerda al aire, antes de la cejuela).
     STRING_ORDER_TOP_TO_BOTTOM.forEach((stringNum) => {
       const row = document.createElement("div");
       row.className = "fret-row";
@@ -213,8 +208,27 @@ const GuitarNotesMode = (function () {
 
         row.appendChild(btn);
       }
-      els.fretboardInner.appendChild(row);
+      stringsWrap.appendChild(row);
     });
+
+    // Puntos de referencia del diapasón real (3,5,7,9,15,17,19,21 simples; 12 y 24 dobles),
+    // superpuestos detrás de las cuerdas: el simple centrado entre la 3ª y 4ª cuerda (el medio
+    // del diapasón), el doble con un punto entre la 2ª-3ª y otro entre la 4ª-5ª.
+    const markers = document.createElement("div");
+    markers.className = "fretboard-markers";
+    markers.style.gridTemplateColumns = gridCols;
+    for (let f = 0; f <= gn.fretsCount; f++) {
+      const col = f + 2; // +1 por la columna de la etiqueta, +1 porque grid-column empieza en 1
+      if (DOUBLE_MARKER_FRETS.has(f)) {
+        markers.appendChild(createMarkerDot(col, 2, 4));
+        markers.appendChild(createMarkerDot(col, 4, 6));
+      } else if (SINGLE_MARKER_FRETS.has(f)) {
+        markers.appendChild(createMarkerDot(col, 3, 5));
+      }
+    }
+    stringsWrap.appendChild(markers);
+
+    els.fretboardInner.appendChild(stringsWrap);
 
     // Fila de números de traste, abajo de todo.
     const numberRow = document.createElement("div");
@@ -228,6 +242,14 @@ const GuitarNotesMode = (function () {
       numberRow.appendChild(cell);
     }
     els.fretboardInner.appendChild(numberRow);
+  }
+
+  function createMarkerDot(col, rowStart, rowEnd) {
+    const dot = document.createElement("span");
+    dot.className = "fret-marker-dot";
+    dot.style.gridColumn = String(col);
+    dot.style.gridRow = `${rowStart} / ${rowEnd}`;
+    return dot;
   }
 
   function clearFretHighlights() {
@@ -311,7 +333,13 @@ const GuitarNotesMode = (function () {
 
   function onFretClick(stringNum, fret) {
     if (state.answered) return;
+    playFret(stringNum, fret);
     resolveAnswer({ clickedString: stringNum, clickedFret: fret, clickedNote: getNoteAtFret(stringNum, fret) });
+  }
+
+  function playFret(stringNum, fret, volume) {
+    if (!state.soundOn || !window.GuitarSynth) return;
+    GuitarSynth.pluck(getFrequencyAtFret(stringNum, fret), { volume });
   }
 
   function onTimeout() {
@@ -348,6 +376,8 @@ const GuitarNotesMode = (function () {
         const matchesString = !q.requiresString || s === q.string;
         if (matchesNote && matchesString) btn.classList.add("fret-correct");
       });
+      // Deja oír cómo suena realmente la nota correcta, para reforzar el oído.
+      setTimeout(() => playFret(q.string, q.fret, 0.45), 400);
     }
 
     state.stats.exercises += 1;
@@ -476,6 +506,21 @@ const GuitarNotesMode = (function () {
     });
   }
 
+  function loadSoundPreference(defaultOn) {
+    const stored = localStorage.getItem(STORAGE_SOUND_KEY);
+    return stored === null ? defaultOn : stored === "1";
+  }
+
+  function setSound(on) {
+    state.soundOn = on;
+    localStorage.setItem(STORAGE_SOUND_KEY, on ? "1" : "0");
+    if (window.GuitarSynth) GuitarSynth.setMuted(!on);
+    if (els.soundBtn) {
+      els.soundBtn.textContent = on ? "🔊 Sonido" : "🔇 Sonido";
+      els.soundBtn.setAttribute("aria-pressed", String(on));
+    }
+  }
+
   function updateStatsUI() {
     const accuracy = state.stats.exercises
       ? Math.round((state.stats.correct / state.stats.exercises) * 100)
@@ -535,6 +580,9 @@ const GuitarNotesMode = (function () {
       state.gnConfig.difficulty = state.difficulty;
       setDifficulty(state.difficulty);
 
+      const gnSoundDefault = data.config.guitarNotes ? data.config.guitarNotes.soundEnabled !== false : true;
+      setSound(loadSoundPreference(gnSoundDefault));
+
       renderFretboard();
       updateStatsUI();
       startRound();
@@ -557,6 +605,10 @@ const GuitarNotesMode = (function () {
   });
 
   document.addEventListener("keydown", handleGlobalEnter);
+
+  if (els.soundBtn) {
+    els.soundBtn.addEventListener("click", () => setSound(!state.soundOn));
+  }
 
   els.backBtn.addEventListener("click", () => {
     teardown();
