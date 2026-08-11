@@ -4,7 +4,8 @@
     document.querySelector("#scalesView"),
     document.querySelector("#transportView"),
     document.querySelector("#degreesView"),
-    document.querySelector("#chordsFromDegreesView")
+    document.querySelector("#chordsFromDegreesView"),
+    document.querySelector("#guitarNotesView")
   ];
 
   const modes = [
@@ -15,6 +16,11 @@
       btn: document.querySelector("#playChordsFromDegreesBtn"),
       view: document.querySelector("#chordsFromDegreesView"),
       mode: ChordsFromDegreesMode
+    },
+    {
+      btn: document.querySelector("#playGuitarNotesBtn"),
+      view: document.querySelector("#guitarNotesView"),
+      mode: GuitarNotesMode
     }
   ];
 

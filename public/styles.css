@@ -503,6 +503,163 @@ code {
   margin-bottom: 18px;
 }
 
+/* Modo Notas Guitarra */
+.gn-prompt {
+  text-align: center;
+  margin: 4px 0 22px;
+}
+
+.gn-prompt-label {
+  display: block;
+  color: var(--muted);
+  font-size: .85rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  margin-bottom: 6px;
+}
+
+#gnPromptText {
+  font-size: clamp(2rem, 6vw, 3.2rem);
+  font-weight: 900;
+  color: var(--accent);
+}
+
+.gn-prompt .helper {
+  margin: 10px auto 0;
+  max-width: 480px;
+}
+
+/* Diagrama de diapasón (tablatura): cuerda 1 (fina) arriba, cuerda 6 (gruesa) abajo. Cada
+   celda de cuerda representa el espacio clicable de un traste; los trastes se dibujan como
+   los bordes derechos de esas celdas, y el traste 0 (cuerda al aire) queda antes de la
+   cejuela, marcada con un borde más grueso. */
+.fretboard-scroll {
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.fretboard {
+  display: flex;
+  flex-direction: column;
+  min-width: 560px;
+  background: linear-gradient(180deg, #3a2a1d, #2a1d13);
+  border-radius: 14px;
+  padding: 10px 10px 6px;
+  border: 1px solid var(--border);
+}
+
+.fret-row {
+  display: grid;
+  align-items: center;
+  position: relative;
+  height: 42px;
+}
+
+.string-label {
+  color: #e8d9b8;
+  font-size: .8rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.fret-row:not(.marker-row):not(.number-row)::before {
+  content: "";
+  position: absolute;
+  left: 40px;
+  right: 4px;
+  top: 50%;
+  height: 2px;
+  background: rgba(232,217,184,.55);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.fret-cell {
+  position: relative;
+  height: 100%;
+  margin: 0 1px;
+  border: 0;
+  border-right: 2px solid rgba(220,220,225,.4);
+  background: transparent;
+  cursor: pointer;
+  z-index: 1;
+  padding: 0;
+}
+
+.fret-cell.open-string { border-left: 4px solid rgba(240,240,245,.8); }
+
+.fret-cell::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  transform: translate(-50%,-50%) scale(0);
+  background: rgba(142,227,178,.3);
+  transition: transform .12s ease;
+}
+
+.fret-cell:hover:not(:disabled)::after {
+  transform: translate(-50%,-50%) scale(1);
+}
+
+.fret-cell:disabled { cursor: default; }
+
+.string-disabled { opacity: .28; }
+.string-disabled .fret-cell { cursor: not-allowed; }
+
+.fret-cell.fret-clicked-correct::after,
+.fret-cell.fret-correct::after {
+  transform: translate(-50%,-50%) scale(1);
+  background: var(--accent-strong);
+  box-shadow: 0 0 0 3px rgba(84,199,136,.25);
+}
+
+.fret-cell.fret-clicked-wrong::after {
+  transform: translate(-50%,-50%) scale(1);
+  background: var(--danger);
+  box-shadow: 0 0 0 3px rgba(255,141,141,.25);
+}
+
+.marker-row {
+  height: 20px;
+  margin-bottom: 2px;
+}
+
+.marker-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.marker-cell span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(232,217,184,.5);
+}
+
+.number-row {
+  height: 22px;
+  margin-top: 2px;
+}
+
+.fret-number {
+  text-align: center;
+  color: var(--muted);
+  font-size: .74rem;
+  font-weight: 700;
+}
+
+.fretboard-hint {
+  text-align: center;
+  margin: 10px 0 0;
+  font-size: .82rem;
+}
+
 @media (max-width: 720px) {
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
   .hero, .scale-preview { align-items: flex-start; flex-direction: column; }

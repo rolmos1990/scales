@@ -42,6 +42,13 @@
         <p>Dada una tónica y una serie de grados, escribe los acordes</p>
         <button id="playChordsFromDegreesBtn" class="primary-btn">Jugar</button>
       </article>
+
+      <article class="mode-card">
+        <div class="mode-icon">🎸</div>
+        <h2>Notas Guitarra</h2>
+        <p>Ubica cada nota en el diapasón, traste a traste</p>
+        <button id="playGuitarNotesBtn" class="primary-btn">Jugar</button>
+      </article>
     </div>
   </section>
 
@@ -390,11 +397,112 @@
     </section>
   </main>
 
+  <main class="app-shell hidden" id="guitarNotesView">
+    <section class="hero">
+      <div>
+        <span class="eyebrow">ENTRENAMIENTO DE GUITARRA</span>
+        <h1>Notas Guitarra</h1>
+        <p>Aprende a ubicar cada nota en el diapasón, traste a traste.</p>
+      </div>
+      <div class="hero-actions">
+        <button id="guitarNotesBackBtn" class="ghost-btn">← Menú</button>
+      </div>
+    </section>
+
+    <section class="difficulty-row" id="guitarNotesDifficultyRow">
+      <span class="difficulty-label">Dificultad:</span>
+      <button class="difficulty-btn" data-difficulty="1">Nivel 1 · Básico</button>
+      <button class="difficulty-btn" data-difficulty="2">Nivel 2 · Normal</button>
+      <button class="difficulty-btn" data-difficulty="3">Nivel 3 · Avanzado</button>
+    </section>
+
+    <section class="stats-grid">
+      <article class="stat-card">
+        <span>Ejercicios</span>
+        <strong id="gnExercises">0</strong>
+      </article>
+      <article class="stat-card">
+        <span>Precisión</span>
+        <strong id="gnAccuracy">0%</strong>
+      </article>
+      <article class="stat-card">
+        <span>Racha actual</span>
+        <strong id="gnStreak">0</strong>
+      </article>
+      <article class="stat-card">
+        <span>Mejor racha</span>
+        <strong id="gnBestStreak">0</strong>
+      </article>
+      <article class="stat-card">
+        <span>Tiempo promedio</span>
+        <strong id="gnAvgTime">0.0s</strong>
+      </article>
+      <article class="stat-card">
+        <span>Tiempo total</span>
+        <strong id="gnTotalTime">0:00</strong>
+      </article>
+    </section>
+
+    <section class="game-card" id="guitarNotesGameCard">
+      <div id="gnProgressBar" class="progress-bar"><div></div></div>
+      <div id="guitarNotesError" class="feedback incorrect hidden"></div>
+
+      <div id="guitarNotesContent">
+        <div class="transport-timer">
+          <span id="gnQuestionCount">1/15</span> · ⏱ <span id="gnTimer">0.0s</span>
+        </div>
+
+        <div class="gn-prompt">
+          <span class="gn-prompt-label">Encuentra la nota:</span>
+          <strong id="gnPromptText">C</strong>
+          <p id="gnPromptHelp" class="helper"></p>
+        </div>
+
+        <div id="fretboard" class="fretboard-scroll">
+          <div id="fretboardInner" class="fretboard"></div>
+        </div>
+        <p class="helper fretboard-hint">
+          Arriba la cuerda más fina (1ª, Mi agudo); abajo la más gruesa (6ª, Mi grave) — como en una tablatura.
+        </p>
+
+        <div id="gnFeedback" class="feedback hidden"></div>
+        <button id="gnNextBtn" class="next-btn hidden">Siguiente nota</button>
+      </div>
+
+      <div id="gnRoundResult" class="result-area hidden">
+        <div class="trophy">🎸</div>
+        <h2>¡Ronda completada!</h2>
+        <p id="gnRoundMessage"></p>
+        <div class="final-score">
+          <span>Aciertos de la ronda</span>
+          <strong id="gnRoundScore">0/15</strong>
+        </div>
+        <div class="final-score">
+          <span>Tiempo de la ronda</span>
+          <strong id="gnRoundTime">0s</strong>
+        </div>
+        <div class="final-score">
+          <span>Tiempo promedio por nota</span>
+          <strong id="gnRoundAvgTime">0s</strong>
+        </div>
+        <button id="gnNewRoundBtn" class="primary-btn">Nueva ronda</button>
+      </div>
+    </section>
+
+    <section class="scale-preview" id="guitarNotesHistory">
+      <div>
+        <span class="eyebrow">PRECISIÓN POR NOTA</span>
+        <h3 id="guitarNotesHistoryText">Aún no hay datos suficientes.</h3>
+      </div>
+    </section>
+  </main>
+
   <script src="js/music-theory.js"></script>
   <script src="app.js"></script>
   <script src="js/transport-mode.js"></script>
   <script src="js/degrees-mode.js"></script>
   <script src="js/chords-from-degrees-mode.js"></script>
+  <script src="js/guitar-notes-mode.js"></script>
   <script src="js/menu.js"></script>
 </body>
 </html>

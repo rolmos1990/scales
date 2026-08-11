@@ -79,6 +79,38 @@ Para practicar todos los grados:
 "enabledDegrees": [1, 2, 3, 4, 5, 6, 7]
 ```
 
+## Notas Guitarra
+
+Modo para ubicar notas en el diapasón mediante un diagrama interactivo (6 cuerdas × trastes,
+con los puntos de referencia habituales en 3, 5, 7, 9, 12, 15, 17, 19, 21 y 24): te pide una
+nota (o una nota + cuerda, según la dificultad) y debes presionar el traste correcto.
+
+Orientación tipo tablatura: arriba la cuerda 1 (Mi agudo, la más fina), abajo la cuerda 6
+(Mi grave, la más gruesa) — afinación estándar.
+
+```json
+"guitarNotes": {
+  "enabledStrings": [1, 2, 3, 4, 5, 6],
+  "enabledNotes": ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"],
+  "difficulty": 2,
+  "fretsCount": 15,
+  "questionsPerRound": 15,
+  "timePerQuestionSeconds": 0
+}
+```
+
+- `enabledStrings`: cuerdas habilitadas para practicar (1-6). Las deshabilitadas aparecen
+  atenuadas en el diapasón y no se usan para generar preguntas.
+- `enabledNotes`: notas que pueden pedirse. Para practicar solo naturales usa
+  `["C", "D", "E", "F", "G", "A", "B"]`.
+- `difficulty`: `1` pide solo la nota (vale cualquier cuerda habilitada), `2` y `3` piden nota +
+  cuerda concreta (ej. `(3) G` = nota G en la 3ª cuerda). El `3` además permite que la nota
+  aparezca más allá del traste 11, repitiéndose en la misma cuerda una octava después.
+- `fretsCount`: cantidad de trastes mostrados (sin contar la cuerda al aire). El diagrama tiene
+  scroll horizontal, así que se puede subir hasta 24 (lo típico en una guitarra eléctrica).
+- `timePerQuestionSeconds`: `0` no pone límite y solo cronometra cuánto tardas; un valor mayor a
+  `0` inicia una cuenta regresiva y da la pregunta por fallada si se agota.
+
 ## Banco de escalas
 
 Las respuestas están en:
