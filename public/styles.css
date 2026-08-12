@@ -254,6 +254,68 @@ code {
 
 .hidden { display: none !important; }
 
+/* Mensaje de ánimo con el tiempo de respuesta (se autocierra solo) */
+.time-toast {
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 220px;
+  max-width: min(420px, calc(100% - 32px));
+  padding: 14px 18px 10px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: rgba(22,29,47,.96);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 20px 60px rgba(0,0,0,.35);
+  cursor: pointer;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -14px) scale(.96);
+  transition: opacity .2s ease, transform .2s ease;
+}
+
+.time-toast.hidden { display: none !important; }
+
+.time-toast.visible {
+  opacity: 1;
+  transform: translate(-50%, 0) scale(1);
+  pointer-events: auto;
+}
+
+.time-toast-text {
+  font-weight: 800;
+  font-size: 1rem;
+  text-align: center;
+  color: var(--text);
+}
+
+.time-toast-bar {
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.1);
+  overflow: hidden;
+}
+
+.time-toast-bar-fill {
+  height: 100%;
+  width: 100%;
+  border-radius: 999px;
+  background: var(--accent);
+  transition-property: width;
+  transition-timing-function: linear;
+}
+
+.time-toast.toast-great .time-toast-bar-fill { background: var(--accent); }
+.time-toast.toast-good .time-toast-bar-fill { background: var(--accent-strong); }
+.time-toast.toast-ok .time-toast-bar-fill { background: var(--warning); }
+.time-toast.toast-meh .time-toast-bar-fill { background: var(--danger); }
+
+[aria-pressed="false"].ghost-btn { opacity: .55; }
+
 .hero-actions {
   display: flex;
   gap: 10px;

@@ -161,6 +161,7 @@ const ChordsFromDegreesMode = (function () {
     els.result.classList.add("hidden");
     els.elapsedTime.textContent = "";
     stopTimer();
+    TimeToast.skip();
 
     if (!state.scales.length) {
       els.error.textContent =
@@ -328,6 +329,8 @@ const ChordsFromDegreesMode = (function () {
     els.checkBtn.classList.add("hidden");
     els.result.classList.remove("hidden");
     els.nextBtn.focus();
+
+    TimeToast.show(elapsedMs / 1000);
   }
 
   function handleGlobalEnter(event) {
@@ -342,6 +345,7 @@ const ChordsFromDegreesMode = (function () {
 
   function teardown() {
     stopTimer();
+    TimeToast.skip();
   }
 
   async function start() {
@@ -352,6 +356,7 @@ const ChordsFromDegreesMode = (function () {
 
       state.config = data.config;
       state.scales = data.scales;
+      TimeToast.init(data.config);
       state.difficulty = loadDifficulty(
         (data.config.chordsFromDegrees && data.config.chordsFromDegrees.difficulty) || 2
       );

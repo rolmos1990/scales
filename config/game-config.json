@@ -9,6 +9,7 @@
   ],
   "enabledDegrees": [
     1,
+    2,
     3,
     4,
     5,
@@ -19,6 +20,10 @@
   "timePerQuestionSeconds": 20,
   "allowEnharmonicAnswers": true,
   "showScaleAfterAnswer": true,
+  "encouragementMessages": {
+    "enabled": true,
+    "durationMs": 1500
+  },
   "transport": {
     "difficulty": 2,
     "showDegreesAfterAnswer": true
@@ -32,7 +37,7 @@
     "showChordsAfterAnswer": true
   },
   "guitarNotes": {
-    "enabledStrings": [6],
+    "enabledStrings": [4],
     "enabledNotes": ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"],
     "difficulty": 2,
     "fretsCount": 15,

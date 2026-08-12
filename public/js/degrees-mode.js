@@ -148,6 +148,7 @@ const DegreesMode = (function () {
     els.result.classList.add("hidden");
     els.elapsedTime.textContent = "";
     stopTimer();
+    TimeToast.skip();
 
     if (!state.scales.length) {
       els.error.textContent =
@@ -323,6 +324,8 @@ const DegreesMode = (function () {
     els.checkBtn.classList.add("hidden");
     els.result.classList.remove("hidden");
     els.nextBtn.focus();
+
+    TimeToast.show(elapsedMs / 1000);
   }
 
   function handleGlobalEnter(event) {
@@ -337,6 +340,7 @@ const DegreesMode = (function () {
 
   function teardown() {
     stopTimer();
+    TimeToast.skip();
   }
 
   async function start() {
@@ -347,6 +351,7 @@ const DegreesMode = (function () {
 
       state.config = data.config;
       state.scales = data.scales;
+      TimeToast.init(data.config);
       state.difficulty = loadDifficulty((data.config.degrees && data.config.degrees.difficulty) || 2);
       setDifficulty(state.difficulty);
 

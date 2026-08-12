@@ -48,4 +48,19 @@
   });
 
   document.addEventListener("app:back-to-menu", showMenu);
+
+  const motivationToggleBtn = document.querySelector("#motivationToggleBtn");
+  if (motivationToggleBtn) {
+    motivationToggleBtn.addEventListener("click", () => {
+      TimeToast.setEnabled(!TimeToast.isEnabled());
+    });
+  }
+
+  // Inicializa el interruptor de mensajes de ánimo con el valor por defecto de
+  // config/game-config.json (o el guardado en localStorage) sin esperar a que
+  // el usuario entre a un modo de juego.
+  fetch("/api/game-data")
+    .then((response) => (response.ok ? response.json() : null))
+    .then((data) => data && TimeToast.init(data.config))
+    .catch(() => {});
 })();

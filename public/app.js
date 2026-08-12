@@ -10,7 +10,8 @@ const state = {
   totalTimerId: null,
   secondsLeft: 0,
   currentQuestion: null,
-  startTime: null
+  startTime: null,
+  advanceNow: null
 };
 
 const AUTO_NEXT_DELAY_CORRECT_MS = 2000;
@@ -166,11 +167,37 @@ function evaluateAnswer(rawAnswer, timedOut = false) {
   els.nextBtn.classList.remove("hidden");
   els.nextBtn.focus();
 
+  const elapsedSeconds = Math.max(0, state.config.timePerQuestionSeconds - state.secondsLeft);
+  scheduleNext(elapsedSeconds, correct);
+}
+
+// Encadena el aviso de "cuánto tardaste" antes de pasar a la siguiente pregunta.
+// Mientras el mensaje está en pantalla, el contador de la siguiente pregunta no
+// arranca (recién se llama a nextQuestion cuando la promesa se resuelve o el
+// jugador pulsa "Siguiente pregunta").
+function scheduleNext(elapsedSeconds, correct) {
   clearTimeout(state.autoNextTimerId);
-  state.autoNextTimerId = setTimeout(
-    nextQuestion,
-    correct ? AUTO_NEXT_DELAY_CORRECT_MS : AUTO_NEXT_DELAY_INCORRECT_MS
-  );
+  state.autoNextTimerId = null;
+
+  let advanced = false;
+  const advance = () => {
+    if (advanced) return;
+    advanced = true;
+    clearTimeout(state.autoNextTimerId);
+    state.autoNextTimerId = null;
+    state.advanceNow = null;
+    nextQuestion();
+  };
+  state.advanceNow = advance;
+
+  if (TimeToast.isEnabled()) {
+    TimeToast.show(elapsedSeconds).then(advance);
+  } else {
+    state.autoNextTimerId = setTimeout(
+      advance,
+      correct ? AUTO_NEXT_DELAY_CORRECT_MS : AUTO_NEXT_DELAY_INCORRECT_MS
+    );
+  }
 }
 
 function buildScaleExplanation() {
@@ -226,6 +253,8 @@ function resetGame() {
   clearInterval(state.timerId);
   clearTimeout(state.autoNextTimerId);
   clearInterval(state.totalTimerId);
+  TimeToast.skip();
+  state.advanceNow = null;
   state.questionNumber = 0;
   state.score = 0;
   state.streak = 0;
@@ -245,6 +274,8 @@ function teardownScalesMode() {
   clearInterval(state.timerId);
   clearTimeout(state.autoNextTimerId);
   clearInterval(state.totalTimerId);
+  TimeToast.skip();
+  state.advanceNow = null;
 }
 
 async function loadGame() {
@@ -256,6 +287,7 @@ async function loadGame() {
   const data = await response.json();
   state.config = data.config;
   state.scales = data.scales;
+  TimeToast.init(state.config);
 
   if (!state.scales.length) {
     throw new Error("No hay escalas válidas configuradas.");
@@ -274,7 +306,10 @@ els.answerForm.addEventListener("submit", (event) => {
   evaluateAnswer(els.answerInput.value);
 });
 
-els.nextBtn.addEventListener("click", nextQuestion);
+els.nextBtn.addEventListener("click", () => {
+  TimeToast.skip();
+  if (state.advanceNow) state.advanceNow();
+});
 els.restartBtn.addEventListener("click", resetGame);
 els.playAgainBtn.addEventListener("click", resetGame);
 els.backBtn.addEventListener("click", () => {

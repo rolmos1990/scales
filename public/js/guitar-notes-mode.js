@@ -72,6 +72,7 @@ const GuitarNotesMode = (function () {
     roundCorrect: 0,
     roundStartTime: null,
     autoNextTimerId: null,
+    advanceNow: null,
     stats: loadStats()
   };
 
@@ -455,11 +456,36 @@ const GuitarNotesMode = (function () {
     els.nextBtn.classList.remove("hidden");
     els.nextBtn.focus();
 
+    scheduleNext(elapsedMs / 1000, correct);
+  }
+
+  // Encadena el aviso de "cuánto tardaste" antes de pasar a la siguiente nota.
+  // Mientras el mensaje está en pantalla no arranca el temporizador de la
+  // siguiente pregunta; recién avanza cuando la promesa se resuelve o el
+  // jugador pulsa "Siguiente nota" / Enter.
+  function scheduleNext(elapsedSeconds, correct) {
     clearTimeout(state.autoNextTimerId);
-    state.autoNextTimerId = setTimeout(
-      nextQuestion,
-      correct ? AUTO_NEXT_DELAY_CORRECT_MS : AUTO_NEXT_DELAY_INCORRECT_MS
-    );
+    state.autoNextTimerId = null;
+
+    let advanced = false;
+    const advance = () => {
+      if (advanced) return;
+      advanced = true;
+      clearTimeout(state.autoNextTimerId);
+      state.autoNextTimerId = null;
+      state.advanceNow = null;
+      nextQuestion();
+    };
+    state.advanceNow = advance;
+
+    if (TimeToast.isEnabled()) {
+      TimeToast.show(elapsedSeconds).then(advance);
+    } else {
+      state.autoNextTimerId = setTimeout(
+        advance,
+        correct ? AUTO_NEXT_DELAY_CORRECT_MS : AUTO_NEXT_DELAY_INCORRECT_MS
+      );
+    }
   }
 
   function nextQuestion() {
@@ -497,6 +523,8 @@ const GuitarNotesMode = (function () {
 
   function startRound() {
     clearTimeout(state.autoNextTimerId);
+    TimeToast.skip();
+    state.advanceNow = null;
     state.roundQuestionNumber = 0;
     state.roundCorrect = 0;
     state.roundStartTime = Date.now();
@@ -604,12 +632,15 @@ const GuitarNotesMode = (function () {
     }
     if (!state.answered) return;
     event.preventDefault();
-    nextQuestion();
+    TimeToast.skip();
+    if (state.advanceNow) state.advanceNow();
   }
 
   function teardown() {
     stopTimer();
     clearTimeout(state.autoNextTimerId);
+    TimeToast.skip();
+    state.advanceNow = null;
   }
 
   async function start() {
@@ -619,6 +650,7 @@ const GuitarNotesMode = (function () {
       const data = await response.json();
 
       state.config = data.config;
+      TimeToast.init(data.config);
       state.gnConfig = normalizeConfig(data.config);
       state.difficulty = loadDifficulty(state.gnConfig.difficulty);
       state.gnConfig.difficulty = state.difficulty;
@@ -638,7 +670,10 @@ const GuitarNotesMode = (function () {
     }
   }
 
-  els.nextBtn.addEventListener("click", nextQuestion);
+  els.nextBtn.addEventListener("click", () => {
+    TimeToast.skip();
+    if (state.advanceNow) state.advanceNow();
+  });
   els.newRoundBtn.addEventListener("click", startRound);
 
   els.difficultyRow.querySelectorAll(".difficulty-btn").forEach((btn) => {
